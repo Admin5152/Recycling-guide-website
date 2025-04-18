@@ -7,55 +7,76 @@
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(to right, #c8e6c9, #f0f4c3);
+      background: linear-gradient(to right, #4caf50, #81c784); /* Green gradient */
       margin: 0;
       padding: 0;
-    }
-
-    header {
-      background-color: #33691e;
-      color: white;
-      padding: 30px 20px;
-      text-align: center;
-      border-bottom: 5px solid #aed581;
+      height: 100vh; /* Full height */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-image: url('https://www.example.com/your-image.jpg'); /* Add your background image */
+      background-size: cover;
+      background-position: center;
     }
 
     .container {
-      max-width: 900px;
+      max-width: 400px;
       margin: 20px auto;
-      background: #ffffffdd;
-      padding: 30px;
-      border-radius: 20px;
-      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+      background: rgba(255, 255, 255, 0.9); /* Slightly transparent background */
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
     }
 
     h2 {
-      color: #2e7d32;
+      color: #33691e;
+      text-align: center;
+      margin-bottom: 20px;
     }
 
-    .section {
-      margin-bottom: 30px;
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
     }
 
-    .waste-item {
-      background-color: #e6ee9c;
-      padding: 15px;
-      border-left: 8px solid #558b2f;
-      border-radius: 8px;
-      margin-bottom: 10px;
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #33691e;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
     }
 
-    .facility {
-      background-color: #dcedc8;
-      padding: 15px;
-      border-left: 6px solid #689f38;
-      border-radius: 8px;
-      margin-bottom: 10px;
+    button:hover {
+      background-color: #2c6b1f;
     }
 
-    .facility a {
+    #error-message {
+      color: #388e3c;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    #error-message.email-exists {
+      color: darkgreen;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 20px;
+      color: white;
+    }
+
+    .footer a {
+      color: #81c784;
       text-decoration: none;
-      color: #1b5e20;
       font-weight: bold;
     }
 
@@ -81,97 +102,68 @@
       margin-top: 10px;
       font-size: 16px;
     }
-
-    .xp {
-      font-weight: bold;
-      color: #558b2f;
-    }
-
-    .logout-btn {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      padding: 10px 15px;
-      background-color: #558b2f;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 14px;
-    }
-
-    .logout-btn:hover {
-      background-color: #33691e;
-    }
   </style>
 </head>
 <body>
-  <button class="logout-btn" onclick="logout()">Logout</button>
-  <header>
-    <h1>♻️ Recycling Guide</h1>
-    <p>Scan your waste, sort it properly, and earn XP for saving the planet!</p>
-  </header>
 
   <div class="container">
-    <div class="section">
-      <h2>Waste Sorting Tips</h2>
-      <div class="waste-item">
-        <strong>Plastic Bottles:</strong> Rinse them and place them in the plastic bin.
-      </div>
-      <div class="waste-item">
-        <strong>Glass:</strong> Only recycle clean glass bottles and jars (no ceramics).
-      </div>
-      <div class="waste-item">
-        <strong>Food Waste:</strong> Compost if possible. Do not mix with recyclables.
-      </div>
-      <div class="waste-item">
-        <strong>Paper/Tissues:</strong> Recycle clean paper. Tissues go into compost or trash depending on use.
-      </div>
-    </div>
+    <h2>Login</h2>
+    <input type="email" id="email" placeholder="Enter your email" />
+    <input type="password" id="password" placeholder="Enter your password" />
+    <button onclick="login()">Login</button>
+    <p id="error-message"></p>
+  </div>
 
-    <div class="section">
-      <h2>Nearby Recycling Facilities</h2>
-      <div class="facility" id="facilityInfo">
-        📍 <span id="nearestFacility">Finding nearest facility...</span>
-      </div>
-    </div>
+  <div class="footer">
+    <p>Don't have an account? <a href="signup.html">Sign Up</a></p>
+  </div>
 
-    <div class="scanner">
-      <h2>Scan Your Waste</h2>
-      <video id="video" autoplay></video>
-      <button onclick="captureImage()">Capture Image</button>
-      <canvas id="canvas" style="display:none;"></canvas>
-      <img id="snapshot" style="display:none;"/>
-      <div class="scan-result" id="result">Awaiting scan...</div>
-      <div id="xpDisplay" style="margin-top: 10px; font-size: 18px; font-weight: bold; color: #33691e;"></div>
-    </div>
+  <!-- Camera Capture Section -->
+  <div class="scanner">
+    <h2>Scan Your Waste</h2>
+    <video id="video" autoplay></video>
+    <button onclick="captureImage()">Capture Image</button>
+    <canvas id="canvas" style="display:none;"></canvas>
+    <img id="snapshot" style="display:none;"/>
+    <div class="scan-result" id="result">Awaiting scan...</div>
   </div>
 
   <script>
-    firebase.auth().onAuthStateChanged(user => {
-      if (!user) {
-        window.location.href = "index.html";
-      }
-    });
+    // Firebase Login Functionality
+    function login() {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
 
-    function logout() {
-      firebase.auth().signOut().then(() => {
-        window.location.href = "index.html";
-      }).catch((error) => {
-        alert('Error logging out: ' + error.message);
-      });
+      if (!email || !password) {
+        document.getElementById('error-message').innerText = 'Please fill in all fields.';
+        return;
+      }
+
+      firebase.auth().signInWithEmailAndPassword(email, password)
+        .then(() => {
+          window.location.href = "app.html";  // Redirect to the app's main page after login
+        })
+        .catch((error) => {
+          if (error.code === 'auth/user-not-found') {
+            document.getElementById('error-message').innerText = 'No user found with this email address.';
+          } else if (error.code === 'auth/wrong-password') {
+            document.getElementById('error-message').innerText = 'Incorrect password.';
+          } else if (error.code === 'auth/email-already-in-use') {
+            document.getElementById('error-message').innerText = 'This email already exists.';
+            document.getElementById('error-message').classList.add('email-exists');
+          } else {
+            document.getElementById('error-message').innerText = error.message;
+          }
+        });
     }
 
+    // Image Capture Functionality
     const video = document.getElementById('video');
     const canvas = document.getElementById('canvas');
     const snapshot = document.getElementById('snapshot');
     const result = document.getElementById('result');
-    const facilityInfo = document.getElementById('nearestFacility');
-    const xpDisplay = document.getElementById('xpDisplay');
-    let xp = parseInt(localStorage.getItem('xp')) || 0;
 
-    xpDisplay.innerText = `🌱 Total XP: ${xp}`;
-
+    // Get the video stream from the user's camera
     navigator.mediaDevices.getUserMedia({ video: true })
       .then(stream => {
         video.srcObject = stream;
@@ -190,46 +182,11 @@
       snapshot.src = imageDataUrl;
       snapshot.style.display = 'block';
 
-      const types = [
-        { type: 'Plastic', bin: 'Plastic Bin', recyclable: true },
-        { type: 'Food Waste', bin: 'Compost Bin', recyclable: false },
-        { type: 'Metal', bin: 'Metal Bin', recyclable: true },
-        { type: 'Wood', bin: 'General Waste', recyclable: false },
-        { type: 'Paper/Tissue', bin: 'Paper Bin', recyclable: true },
-        { type: 'Glass', bin: 'Glass Bin', recyclable: true }
-      ];
+      result.innerHTML = "Image captured!";
 
-      const chosen = types[Math.floor(Math.random() * types.length)];
-      result.innerHTML = `📸 Detected: <strong>${chosen.type}</strong><br>🗑️ Put it in the <strong>${chosen.bin}</strong><br>`;
-
-      if (chosen.recyclable) {
-        xp += 5;
-        localStorage.setItem('xp', xp);
-        result.innerHTML += `<br>✅ You earned <span class='xp'>+5 XP</span>!`;
-      } else {
-        result.innerHTML += `<br>⚠️ Not recyclable. No XP gained.`;
-      }
-
-      xpDisplay.innerText = `🌱 Total XP: ${xp}`;
-
-      findNearestFacility(chosen.bin);
-    }
-
-    function findNearestFacility(binType) {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(position => {
-          const lat = position.coords.latitude;
-          const lon = position.coords.longitude;
-          const query = encodeURIComponent(`${binType} recycling near me`);
-          const mapUrl = `https://www.google.com/maps/search/?api=1&query=${query}&center=${lat},${lon}`;
-          facilityInfo.innerHTML = `<a href="${mapUrl}" target="_blank">Nearest place for ${binType}</a>`;
-        }, () => {
-          facilityInfo.innerText = 'Unable to fetch location.';
-        });
-      } else {
-        facilityInfo.innerText = 'Geolocation not supported.';
-      }
+      // Here, you can add additional logic to process the image if needed.
     }
   </script>
+
 </body>
 </html>
