@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Recycling Guide App</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #c8e6c9, #f0f4c3);
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #33691e;
+      color: white;
+      padding: 30px 20px;
+      text-align: center;
+      border-bottom: 5px solid #aed581;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 20px auto;
+      background: #ffffffdd;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      color: #2e7d32;
+    }
+
+    .section {
+      margin-bottom: 30px;
+    }
+
+    .waste-item {
+      background-color: #e6ee9c;
+      padding: 15px;
+      border-left: 8px solid #558b2f;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+
+    .facility {
+      background-color: #dcedc8;
+      padding: 15px;
+      border-left: 6px solid #689f38;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+
+    .facility a {
+      text-decoration: none;
+      color: #1b5e20;
+      font-weight: bold;
+    }
+
+    .scanner {
+      margin-top: 30px;
+      padding: 20px;
+      background-color: #f1f8e9;
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    video, canvas, img {
+      width: 100%;
+      max-width: 400px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+
+    .scan-result {
+      background-color: #c5e1a5;
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 10px;
+      font-size: 16px;
+    }
+
+    .xp {
+      font-weight: bold;
+      color: #558b2f;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>♻️ Recycling Guide</h1>
+    <p>Scan your waste, sort it properly, and earn XP for saving the planet!</p>
+  </header>
+
+  <div class="container">
+    <div class="section">
+      <h2>Waste Sorting Tips</h2>
+      <div class="waste-item">
+        <strong>Plastic Bottles:</strong> Rinse them and place them in the plastic bin.
+      </div>
+      <div class="waste-item">
+        <strong>Glass:</strong> Only recycle clean glass bottles and jars (no ceramics).
+      </div>
+      <div class="waste-item">
+        <strong>Food Waste:</strong> Compost if possible. Do not mix with recyclables.
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Nearby Recycling Facilities</h2>
+      <div class="facility" id="facilityInfo">
+        📍 <span id="nearestFacility">Finding nearest facility...</span>
+      </div>
+    </div>
+
+    <div class="scanner">
+      <h2>Scan Your Waste</h2>
+      <video id="video" autoplay></video>
+      <button onclick="captureImage()">Capture Image</button>
+      <canvas id="canvas" style="display:none;"></canvas>
+      <img id="snapshot" style="display:none;"/>
+      <div class="scan-result" id="result">Awaiting scan...</div>
+    </div>
+  </div>
+
+  <script>
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const snapshot = document.getElementById('snapshot');
+    const result = document.getElementById('result');
+    const facilityInfo = document.getElementById('nearestFacility');
+    let xp = 0;
+
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then(stream => {
+        video.srcObject = stream;
+      })
+      .catch(err => {
+        result.innerText = 'Camera access denied.';
+      });
+
+    function captureImage() {
+      const context = canvas.getContext('2d');
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      const imageDataUrl = canvas.toDataURL('image/png');
+      snapshot.src = imageDataUrl;
+      snapshot.style.display = 'block';
+
+      // Simulated object recognition logic
+      const types = [
+        { type: 'Plastic', bin: 'Plastic Bin', recyclable: true },
+        { type: 'Food Waste', bin: 'Compost Bin', recyclable: false },
+        { type: 'Metal', bin: 'Metal Bin', recyclable: true },
+        { type: 'Wood', bin: 'General Waste', recyclable: false }
+      ];
+
+      const chosen = types[Math.floor(Math.random() * types.length)];
+      result.innerHTML = `📸 Detected: <strong>${chosen.type}</strong><br>🗑️ Put it in the <strong>${chosen.bin}</strong><br>`;
+
+      if (chosen.recyclable) {
+        xp += 5;
+        result.innerHTML += `<br>✅ You earned <span class='xp'>+5 XP</span>! Total XP: <span class='xp'>${xp}</span>`;
+      }
+
+      findNearestFacility(chosen.bin);
+    }
+
+    function findNearestFacility(binType) {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(position => {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+          const query = encodeURIComponent(`${binType} recycling near me`);
+          const mapUrl = `https://www.google.com/maps/search/?api=1&query=${query}&center=${lat},${lon}`;
+          facilityInfo.innerHTML = `<a href="${mapUrl}" target="_blank">Nearest place for ${binType}</a>`;
+        }, () => {
+          facilityInfo.innerText = 'Unable to fetch location.';
+        });
+      } else {
+        facilityInfo.innerText = 'Geolocation not supported.';
+      }
+    }
+  </script>
+</body>
+</html>
