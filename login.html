@@ -77,7 +77,12 @@
       measurementId: "G-VDDE5QWJWT"
     };
 
-    firebase.initializeApp(firebaseConfig);
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    } else {
+      firebase.app();
+    }
+
     const auth = firebase.auth();
     const db = firebase.firestore();
 
@@ -85,8 +90,8 @@
       const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
       auth.signInWithEmailAndPassword(email, password)
-        .then(user => {
-          window.location.href = 'index.html';
+        .then(() => {
+          window.location.href = "index.html";
         })
         .catch(error => {
           document.getElementById('status').innerText = error.message;
