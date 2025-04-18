@@ -106,6 +106,9 @@
       <div class="waste-item">
         <strong>Food Waste:</strong> Compost if possible. Do not mix with recyclables.
       </div>
+      <div class="waste-item">
+        <strong>Paper/Tissues:</strong> Recycle clean paper. Tissues go into compost or trash depending on use.
+      </div>
     </div>
 
     <div class="section">
@@ -122,6 +125,7 @@
       <canvas id="canvas" style="display:none;"></canvas>
       <img id="snapshot" style="display:none;"/>
       <div class="scan-result" id="result">Awaiting scan...</div>
+      <div id="xpDisplay" style="margin-top: 10px; font-size: 18px; font-weight: bold; color: #33691e;"></div>
     </div>
   </div>
 
@@ -131,7 +135,10 @@
     const snapshot = document.getElementById('snapshot');
     const result = document.getElementById('result');
     const facilityInfo = document.getElementById('nearestFacility');
-    let xp = 0;
+    const xpDisplay = document.getElementById('xpDisplay');
+    let xp = parseInt(localStorage.getItem('xp')) || 0;
+
+    xpDisplay.innerText = `🌱 Total XP: ${xp}`;
 
     navigator.mediaDevices.getUserMedia({ video: true })
       .then(stream => {
@@ -151,12 +158,13 @@
       snapshot.src = imageDataUrl;
       snapshot.style.display = 'block';
 
-      // Simulated object recognition logic
       const types = [
         { type: 'Plastic', bin: 'Plastic Bin', recyclable: true },
         { type: 'Food Waste', bin: 'Compost Bin', recyclable: false },
         { type: 'Metal', bin: 'Metal Bin', recyclable: true },
-        { type: 'Wood', bin: 'General Waste', recyclable: false }
+        { type: 'Wood', bin: 'General Waste', recyclable: false },
+        { type: 'Paper/Tissue', bin: 'Paper Bin', recyclable: true },
+        { type: 'Glass', bin: 'Glass Bin', recyclable: true }
       ];
 
       const chosen = types[Math.floor(Math.random() * types.length)];
@@ -164,8 +172,13 @@
 
       if (chosen.recyclable) {
         xp += 5;
-        result.innerHTML += `<br>✅ You earned <span class='xp'>+5 XP</span>! Total XP: <span class='xp'>${xp}</span>`;
+        localStorage.setItem('xp', xp);
+        result.innerHTML += `<br>✅ You earned <span class='xp'>+5 XP</span>!`;
+      } else {
+        result.innerHTML += `<br>⚠️ Not recyclable. No XP gained.`;
       }
+
+      xpDisplay.innerText = `🌱 Total XP: ${xp}`;
 
       findNearestFacility(chosen.bin);
     }
