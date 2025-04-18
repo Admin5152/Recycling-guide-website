@@ -172,6 +172,7 @@
         result.innerText = 'Camera access denied.';
       });
 
+    // Capture Image from Video Stream
     function captureImage() {
       const context = canvas.getContext('2d');
       canvas.width = video.videoWidth;
@@ -184,7 +185,24 @@
 
       result.innerHTML = "Image captured!";
 
-      // Here, you can add additional logic to process the image if needed.
+      // Mock Identification Logic
+      const types = [
+        { type: 'Plastic', bin: 'Plastic Bin', recyclable: true },
+        { type: 'Food Waste', bin: 'Compost Bin', recyclable: false },
+        { type: 'Metal', bin: 'Metal Bin', recyclable: true },
+        { type: 'Wood', bin: 'General Waste', recyclable: false },
+        { type: 'Paper/Tissue', bin: 'Paper Bin', recyclable: true },
+        { type: 'Glass', bin: 'Glass Bin', recyclable: true }
+      ];
+
+      const chosen = types[Math.floor(Math.random() * types.length)];
+      result.innerHTML = `📸 Detected: <strong>${chosen.type}</strong><br>🗑️ Put it in the <strong>${chosen.bin}</strong><br>`;
+
+      if (chosen.recyclable) {
+        result.innerHTML += `<br>✅ This item is recyclable!`;
+      } else {
+        result.innerHTML += `<br>⚠️ This item is not recyclable.`;
+      }
     }
   </script>
 
