@@ -91,7 +91,7 @@
       const password = document.getElementById('password').value;
       auth.signInWithEmailAndPassword(email, password)
         .then(() => {
-          window.location.href = "index.html";
+          window.location.href = "app.html";
         })
         .catch(error => {
           document.getElementById('status').innerText = error.message;
