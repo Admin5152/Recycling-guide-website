@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Recycling Guide App</title>
+  <title>EcoSort - Recycling Guide</title>
+  <link rel="stylesheet" href="styles.css">
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
@@ -12,12 +13,76 @@
       padding: 0;
     }
 
-    header {
+    .navbar {
       background-color: #33691e;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       color: white;
-      padding: 30px 20px;
+    }
+
+    .nav-links {
+      list-style: none;
+      display: flex;
+      gap: 20px;
+    }
+
+    .nav-links li a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    header.hero {
+      background-color: #558b2f;
+      color: white;
       text-align: center;
-      border-bottom: 5px solid #aed581;
+      padding: 50px 20px;
+    }
+
+    .cta-button {
+      background-color: #aed581;
+      border: none;
+      padding: 15px 30px;
+      border-radius: 10px;
+      font-size: 18px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+
+    .features {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      padding: 40px 20px;
+    }
+
+    .feature-card {
+      background-color: #f1f8e9;
+      padding: 20px;
+      border-radius: 15px;
+      width: 250px;
+      text-align: center;
+      margin: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .feature-card img {
+      width: 80px;
+      height: auto;
+    }
+
+    .map-section {
+      padding: 20px;
+      text-align: center;
+      background-color: #e8f5e9;
+    }
+
+    .map-container {
+      height: 300px;
+      background-color: #c5e1a5;
+      margin-top: 10px;
     }
 
     .container {
@@ -29,37 +94,7 @@
       box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
     }
 
-    h2 {
-      color: #2e7d32;
-    }
-
-    .section {
-      margin-bottom: 30px;
-    }
-
-    .waste-item {
-      background-color: #e6ee9c;
-      padding: 15px;
-      border-left: 8px solid #558b2f;
-      border-radius: 8px;
-      margin-bottom: 10px;
-    }
-
-    .facility {
-      background-color: #dcedc8;
-      padding: 15px;
-      border-left: 6px solid #689f38;
-      border-radius: 8px;
-      margin-bottom: 10px;
-    }
-
-    .facility a {
-      text-decoration: none;
-      color: #1b5e20;
-      font-weight: bold;
-    }
-
-    .scanner {
+    .scanner, .xp-history {
       margin-top: 30px;
       padding: 20px;
       background-color: #f1f8e9;
@@ -104,94 +139,87 @@
       background-color: #33691e;
     }
   </style>
-  <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-auth.js"></script>
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyDTcVaJTN3WI7Rtha6Ady0RZlNfB-4t9d8",
-      authDomain: "recycling-guide-website.firebaseapp.com",
-      projectId: "recycling-guide-website",
-      storageBucket: "recycling-guide-website.appspot.com",
-      messagingSenderId: "1003865975000",
-      appId: "1:1003865975000:web:95bb4d0b062329daed8fad",
-      measurementId: "G-VDDE5QWJWT"
-    };
-
-    firebase.initializeApp(firebaseConfig);
-  </script>
 </head>
 <body>
-  <button class="logout-btn" onclick="logout()">Logout</button>
-  <header>
-    <h1>♻️ Recycling Guide</h1>
-    <p>Scan your waste, sort it properly, and earn XP for saving the planet!</p>
+  <nav class="navbar">
+    <div class="logo">EcoSort</div>
+    <ul class="nav-links">
+      <li><a href="#home">Home</a></li>
+      <li><a href="#scanner">Waste Scanner</a></li>
+      <li><a href="#directory">Recycling Centers</a></li>
+      <li><a href="#guide">Sorting Guide</a></li>
+    </ul>
+  </nav>
+
+  <header class="hero">
+    <h1>Smart Recycling Made Simple</h1>
+    <p>Scan, Sort, and Recycle Responsibly</p>
+    <button class="cta-button" onclick="document.getElementById('video').scrollIntoView({ behavior: 'smooth' });">Start Scanning</button>
   </header>
 
+  <section class="features">
+    <div class="feature-card">
+      <img src="scanner-icon.png" alt="Scanner">
+      <h2>Waste Scanner</h2>
+      <p>Instantly identify recyclable materials</p>
+    </div>
+    <div class="feature-card">
+      <img src="map-icon.png" alt="Map">
+      <h2>Find Centers</h2>
+      <p>Locate nearby recycling facilities</p>
+    </div>
+    <div class="feature-card">
+      <img src="guide-icon.png" alt="Guide">
+      <h2>Sorting Guide</h2>
+      <p>Learn proper waste sorting</p>
+    </div>
+  </section>
+
   <div class="container">
-    <div class="section">
-      <h2>Waste Sorting Tips</h2>
-      <div class="waste-item">
-        <strong>Plastic Bottles:</strong> Rinse them and place them in the plastic bin.
-      </div>
-      <div class="waste-item">
-        <strong>Glass:</strong> Only recycle clean glass bottles and jars (no ceramics).
-      </div>
-      <div class="waste-item">
-        <strong>Food Waste:</strong> Compost if possible. Do not mix with recyclables.
-      </div>
-      <div class="waste-item">
-        <strong>Paper/Tissues:</strong> Recycle clean paper. Tissues go into compost or trash depending on use.
-      </div>
-    </div>
-
-    <div class="section">
-      <h2>Nearby Recycling Facilities</h2>
-      <div class="facility" id="facilityInfo">
-        📍 <span id="nearestFacility">Finding nearest facility...</span>
-      </div>
-    </div>
-
-    <div class="scanner">
+    <div class="scanner" id="scanner">
       <h2>Scan Your Waste</h2>
       <video id="video" autoplay></video>
       <button onclick="captureImage()">Capture Image</button>
       <canvas id="canvas" style="display:none;"></canvas>
       <img id="snapshot" style="display:none;"/>
       <div class="scan-result" id="result">Awaiting scan...</div>
-      <div id="xpDisplay" style="margin-top: 10px; font-size: 18px; font-weight: bold; color: #33691e;"></div>
+      <div id="xpDisplay"></div>
+    </div>
+
+    <div class="xp-history">
+      <h2>XP History</h2>
+      <ul id="xpList"></ul>
     </div>
   </div>
 
+  <section class="map-section" id="directory">
+    <h2>Nearby Recycling Centers</h2>
+    <div id="nearestFacility">Finding nearest facility...</div>
+    <div class="map-container">
+      <!-- Future integration -->
+    </div>
+  </section>
+
   <script>
-    firebase.auth().onAuthStateChanged(user => {
-      if (!user) {
-        window.location.href = "index.html";
-      }
-    });
-
-    function logout() {
-      firebase.auth().signOut().then(() => {
-        window.location.href = "index.html";
-      }).catch((error) => {
-        alert('Error logging out: ' + error.message);
-      });
-    }
-
     const video = document.getElementById('video');
     const canvas = document.getElementById('canvas');
     const snapshot = document.getElementById('snapshot');
     const result = document.getElementById('result');
-    const facilityInfo = document.getElementById('nearestFacility');
     const xpDisplay = document.getElementById('xpDisplay');
-    let xp = parseInt(localStorage.getItem('xp')) || 0;
+    const xpList = document.getElementById('xpList');
+    const facilityInfo = document.getElementById('nearestFacility');
 
-    xpDisplay.innerText = `🌱 Total XP: ${xp}`;
+    let xp = parseInt(localStorage.getItem('xp')) || 0;
+    let xpHistory = JSON.parse(localStorage.getItem('xpHistory')) || [];
+
+    updateXPDisplay();
+    updateXPHistory();
 
     navigator.mediaDevices.getUserMedia({ video: true })
       .then(stream => {
         video.srcObject = stream;
       })
-      .catch(err => {
+      .catch(() => {
         result.innerText = 'Camera access denied.';
       });
 
@@ -219,15 +247,26 @@
 
       if (chosen.recyclable) {
         xp += 5;
-        localStorage.setItem('xp', xp);
         result.innerHTML += `<br>✅ You earned <span class='xp'>+5 XP</span>!`;
+        xpHistory.push(`+5 XP for ${chosen.type}`);
       } else {
         result.innerHTML += `<br>⚠️ Not recyclable. No XP gained.`;
+        xpHistory.push(`0 XP for ${chosen.type}`);
       }
 
-      xpDisplay.innerText = `🌱 Total XP: ${xp}`;
-
+      localStorage.setItem('xp', xp);
+      localStorage.setItem('xpHistory', JSON.stringify(xpHistory));
+      updateXPDisplay();
+      updateXPHistory();
       findNearestFacility(chosen.bin);
+    }
+
+    function updateXPDisplay() {
+      xpDisplay.innerText = `🌱 Total XP: ${xp}`;
+    }
+
+    function updateXPHistory() {
+      xpList.innerHTML = xpHistory.map(entry => `<li>${entry}</li>`).join('');
     }
 
     function findNearestFacility(binType) {
